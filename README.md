@@ -12,11 +12,11 @@ Serwer jest zbudowany w sposób modułowy, gdzie każda główna funkcja odpowia
 
 1 Funkcja main() - Serce serwera:
 
-1.1 Inicjalizacja:
+1.1. Inicjalizacja:
 Definiuje podstawowe stałe, takie jak www_root (katalog główny dla plików WWW) i log_file_name (nazwa pliku logu).
 Wywołuje log_message() do zapisania informacji o starcie serwera.
 Sprawdzanie/Tworzenie katalogu www: To ważny krok dodany ostatnio. Używa funkcji systemowych stat() (do sprawdzenia, czy katalog istnieje i czy jest katalogiem) oraz mkdir() (do utworzenia katalogu z uprawnieniami 0755, jeśli nie istnieje). Jeśli katalog nie istnieje i nie da się go utworzyć, lub jeśli ścieżka www_root istnieje, ale nie jest katalogiem, serwer kończy pracę z błędem.
-1.2 Konfiguracja gniazda (socket):
+1.2. Konfiguracja gniazda (socket):
 socket(AF_INET, SOCK_STREAM, 0): Tworzy gniazdo sieciowe. AF_INET oznacza użycie protokołu IPv4, SOCK_STREAM oznacza gniazdo strumieniowe (dla TCP).
 setsockopt(...): Ustawia opcje gniazda. SO_REUSEADDR i SO_REUSEPORT pozwalają na natychmiastowe ponowne użycie adresu i portu po zamknięciu serwera, co jest przydatne podczas dewelopmentu.
 address.sin_family = AF_INET; address.sin_addr.s_addr = INADDR_ANY; address.sin_port = htons(8080);: Konfiguruje strukturę adresu serwera. INADDR_ANY oznacza, że serwer będzie nasłuchiwał na wszystkich dostępnych interfejsach sieciowych maszyny, a htons(8080) ustawia port nasłuchu na 8080 (konwertując go na sieciowy porządek bajtów).
