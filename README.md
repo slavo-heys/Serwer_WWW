@@ -4,7 +4,7 @@
 2. Polecenie kompilacji: g++ start.cpp -o start
 3. Polecenie startu programu: ./start
 
-Możesz też pobrać gotowy plik wykonywalny z >>relase, polecenie do uruchomienia: /.start
+Możesz też pobrać gotowy plik wykonywalny z >>Release, polecenie do uruchomienia: /.server
 
 Po uruchomieniu programu, sprawdzane jest czy istnieje katalog www,
 jeśli nie to program go utworzy. W tym katalogu umieść swoją stronę.
