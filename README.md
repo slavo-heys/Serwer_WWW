@@ -12,10 +12,10 @@ Serwer jest zbudowany w sposób modułowy, gdzie każda główna funkcja odpowia
 
 1. Funkcja main() - Serce serwera:
 
-1.1. Inicjalizacja:
-Definiuje podstawowe stałe, takie jak www_root (katalog główny dla plików WWW) i log_file_name (nazwa pliku logu).
-Wywołuje log_message() do zapisania informacji o starcie serwera.
-Sprawdzanie/Tworzenie katalogu www: To ważny krok dodany ostatnio. Używa funkcji systemowych stat() (do sprawdzenia, czy katalog istnieje i czy jest katalogiem) oraz mkdir() (do utworzenia katalogu z uprawnieniami 0755, jeśli nie istnieje). Jeśli katalog nie istnieje i nie da się go utworzyć, lub jeśli ścieżka www_root istnieje, ale nie jest katalogiem, serwer kończy pracę z błędem.
+  1.1. Inicjalizacja:
+  Definiuje podstawowe stałe, takie jak www_root (katalog główny dla plików WWW) i log_file_name (nazwa pliku logu).
+  Wywołuje log_message() do zapisania informacji o starcie serwera.
+  Sprawdzanie/Tworzenie katalogu www: To ważny krok dodany ostatnio. Używa funkcji systemowych stat() (do sprawdzenia, czy katalog istnieje i czy jest katalogiem) oraz mkdir() (do utworzenia katalogu z uprawnieniami 0755, jeśli nie istnieje).     Jeśli katalog nie istnieje i nie da się go utworzyć, lub jeśli ścieżka www_root istnieje, ale nie jest katalogiem, serwer kończy pracę z błędem.
 
 1.2. Konfiguracja gniazda (socket):
 socket(AF_INET, SOCK_STREAM, 0): Tworzy gniazdo sieciowe. AF_INET oznacza użycie protokołu IPv4, SOCK_STREAM oznacza gniazdo strumieniowe (dla TCP).
