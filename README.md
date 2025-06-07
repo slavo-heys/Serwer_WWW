@@ -70,33 +70,33 @@ requested_file_stream.close(): Zamyka strumień pliku.
 
 3. Funkcja log_message() - Rejestrowanie zdarzeń:
 
-3.1 Pobiera aktualny czas systemowy za pomocą std::chrono.
-3.2 Formatuje czas do postaci YYYY-MM-DD HH:MM:SS za pomocą std::put_time.
-3.3Tworzy pełną wiadomość logu, łącząc znacznik czasu z przekazaną wiadomością.
-3.4 Jeśli is_error jest true, wypisuje wiadomość na std::cerr (standardowe wyjście błędów), w przeciwnym razie na std::cout (standardowe wyjście).
-3.5 Otwiera plik logu (log_file_name) w trybie dopisywania (std::ios::app).
-3.6 Zapisuje pełną wiadomość logu do pliku.
-3.7Zamyka plik logu.
-3.8Obsługuje błąd, jeśli nie uda się otworzyć pliku logu (wypisuje wtedy krytyczny błąd tylko na std::cerr).
+- Pobiera aktualny czas systemowy za pomocą std::chrono.
+- Formatuje czas do postaci YYYY-MM-DD HH:MM:SS za pomocą std::put_time.
+- 3Tworzy pełną wiadomość logu, łącząc znacznik czasu z przekazaną wiadomością.
+- Jeśli is_error jest true, wypisuje wiadomość na std::cerr (standardowe wyjście błędów), w przeciwnym razie na std::cout (standardowe wyjście).
+- Otwiera plik logu (log_file_name) w trybie dopisywania (std::ios::app).
+- Zapisuje pełną wiadomość logu do pliku.
+- Zamyka plik logu.
+- Obsługuje błąd, jeśli nie uda się otworzyć pliku logu (wypisuje wtedy krytyczny błąd tylko na std::cerr).
 
 4. Funkcje send_response() i send_file_response() - Wysyłanie odpowiedzi HTTP:
 
-4.1 Obie funkcje budują odpowiedź HTTP jako string.
-4.2 send_response(): Służy do wysyłania prostych odpowiedzi tekstowych (np. stron błędów).
+- Obie funkcje budują odpowiedź HTTP jako string.
+- send_response(): Służy do wysyłania prostych odpowiedzi tekstowych (np. stron błędów).
 Składa nagłówki: HTTP/1.1 <status_code>, Content-Type, Content-Length, Connection: close. Connection: close informuje klienta, że serwer zamknie połączenie po wysłaniu odpowiedzi, co upraszcza zarządzanie połączeniami w tym prostym serwerze.
 Dołącza treść (body) odpowiedzi.
-4.3 send_file_response(): Służy do wysyłania zawartości plików.
+- send_file_response(): Służy do wysyłania zawartości plików.
 Składa nagłówki podobnie jak send_response(), używając rozmiaru file_data dla Content-Length.
 Najpierw wysyła same nagłówki.
 Następnie, jeśli file_data nie jest puste, wysyła zawartość pliku (dane binarne z wektora).
-4.4 Obie funkcje używają write() do wysłania danych przez gniazdo. Sprawdzają, czy write() nie zwrócił błędu i czy wszystkie dane zostały wysłane, logując ewentualne problemy.
+- Obie funkcje używają write() do wysłania danych przez gniazdo. Sprawdzają, czy write() nie zwrócił błędu i czy wszystkie dane zostały wysłane, logując ewentualne problemy.
 
 5. Funkcja get_mime_type() - Określanie typu zawartości:
 
-5.1 Na podstawie rozszerzenia pliku (np. .html, .css, .jpg) zwraca odpowiedni typ MIME (np. text/html, text/css, image/jpeg).
-5.2 Najpierw znajduje ostatnią kropkę w nazwie pliku, aby wyodrębnić rozszerzenie.
-5.3 Konwertuje rozszerzenie na małe litery, aby dopasowanie było niezależne od wielkości liter.
-5.4 Używa serii instrukcji if do porównania rozszerzenia ze znanymi typami.
-5.5 Jeśli rozszerzenie nie pasuje do żadnego znanego typu, zwraca domyślny typ application/octet-stream (co oznacza "dowolne dane binarne").
+- Na podstawie rozszerzenia pliku (np. .html, .css, .jpg) zwraca odpowiedni typ MIME (np. text/html, text/css, image/jpeg).
+- Najpierw znajduje ostatnią kropkę w nazwie pliku, aby wyodrębnić rozszerzenie.
+- Konwertuje rozszerzenie na małe litery, aby dopasowanie było niezależne od wielkości liter.
+- Używa serii instrukcji if do porównania rozszerzenia ze znanymi typami.
+- Jeśli rozszerzenie nie pasuje do żadnego znanego typu, zwraca domyślny typ application/octet-stream (co oznacza "dowolne dane binarne").
 
 Program wykorzystuje standardowe biblioteki C++ oraz funkcje systemowe POSIX (głównie dla operacji sieciowych i plikowych), co czyni go przenośnym między systemami typu Unix (jak Linux). Każdy "moduł" (funkcja) ma jasno zdefiniowaną odpowiedzialność, co przyczynia się do czytelności i łatwości w utrzymaniu kodu.
