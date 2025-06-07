@@ -10,7 +10,7 @@ jeśli nie to program go utworzy. W tym katalogu umieść swoją stronę.
 ## Opis działania programu:
 Serwer jest zbudowany w sposób modułowy, gdzie każda główna funkcja odpowiada za określony fragment logiki.
 
-1 Funkcja main() - Serce serwera:
+1. Funkcja main() - Serce serwera:
 
 1.1. Inicjalizacja:
 Definiuje podstawowe stałe, takie jak www_root (katalog główny dla plików WWW) i log_file_name (nazwa pliku logu).
