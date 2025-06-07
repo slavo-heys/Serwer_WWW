@@ -14,6 +14,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h> // Dla inet_ntop
 #include <unistd.h>    // Dla read, write, close
+#include <sys/stat.h>  // Dla stat i mkdir
 
 // --- Funkcje pomocnicze ---
 
@@ -251,16 +252,34 @@ int main() {
 
     log_message("Server starting...", log_file_name);
 
+    // Sprawdź i utwórz katalog www_root, jeśli nie istnieje
+    struct stat st = {0};
+    if (stat(www_root.c_str(), &st) == -1) {
+        log_message("Directory '" + www_root + "' not found. Creating...", log_file_name);
+        // Użyj 0755 jako uprawnień: rwxr-xr-x
+        // Właściciel ma pełne prawa, grupa i inni mają prawa do odczytu i wykonania.
+        if (mkdir(www_root.c_str(), 0755) == -1) {
+            perror(("FATAL: mkdir failed for " + www_root).c_str());
+            log_message("FATAL: Could not create directory '" + www_root + "': " + strerror(errno), log_file_name, true);
+            return 1; // Zakończ, jeśli nie można utworzyć katalogu
+        }
+        log_message("Directory '" + www_root + "' created successfully.", log_file_name);
+    } else {
+        if (!S_ISDIR(st.st_mode)) {
+            log_message("FATAL: '" + www_root + "' exists but is not a directory.", log_file_name, true);
+            return 1; // Zakończ, jeśli www_root istnieje, ale nie jest katalogiem
+        }
+        log_message("Directory '" + www_root + "' found.", log_file_name);
+    }
+
+
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0) {
-        // Użyj perror dla błędów krytycznych przy starcie, zanim log_message będzie w pełni operacyjne
-        // lub jeśli log_message samo w sobie zawiedzie.
         perror("FATAL: socket creation failed"); 
         return 1;
     }
     log_message("Socket created successfully.", log_file_name);
 
-    // Umożliwienie ponownego użycia adresu (przydatne przy szybkim restarcie serwera)
     int opt = 1;
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
         perror("FATAL: setsockopt failed");
@@ -270,8 +289,8 @@ int main() {
     log_message("Socket options set (SO_REUSEADDR, SO_REUSEPORT).", log_file_name);
 
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY; // Nasłuchuj na wszystkich interfejsach
-    address.sin_port = htons(8080);       // Port serwera
+    address.sin_addr.s_addr = INADDR_ANY; 
+    address.sin_port = htons(8080);       
 
     if (bind(server_fd, (struct sockaddr*)&address, sizeof(address)) < 0) {
         perror("FATAL: bind failed");
@@ -280,7 +299,7 @@ int main() {
     }
     log_message("Socket bound to port 8080.", log_file_name);
 
-    if (listen(server_fd, 10) < 0) { // 10 to backlog - maksymalna długość kolejki oczekujących połączeń
+    if (listen(server_fd, 10) < 0) { 
         perror("FATAL: listen failed");
         close(server_fd);
         return 1;
@@ -294,17 +313,15 @@ int main() {
         int new_socket_fd = accept(server_fd, (struct sockaddr*)&client_address_struct, &client_addr_len);
         
         if (new_socket_fd < 0) {
-            // Logujemy błąd accept, ale serwer kontynuuje pracę
             log_message("Error: accept failed: " + std::string(strerror(errno)), log_file_name, true);
-            continue; // Kontynuuj, aby obsłużyć inne połączenia, zamiast zamykać serwer
+            continue; 
         }
         
         handle_connection(new_socket_fd, client_address_struct, www_root, log_file_name);
-        // Gniazdo klienta jest zamykane w handle_connection
     }
 
-    log_message("Server shutting down...", log_file_name); // Teoretycznie nieosiągalne w obecnej pętli
-    close(server_fd); // Zamknij gniazdo serwera przy wyjściu (teoretycznie)
+    log_message("Server shutting down...", log_file_name); 
+    close(server_fd); 
     return 0;
 }
 
