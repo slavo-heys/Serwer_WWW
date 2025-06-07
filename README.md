@@ -16,16 +16,19 @@ Serwer jest zbudowany w sposób modułowy, gdzie każda główna funkcja odpowia
 Definiuje podstawowe stałe, takie jak www_root (katalog główny dla plików WWW) i log_file_name (nazwa pliku logu).
 Wywołuje log_message() do zapisania informacji o starcie serwera.
 Sprawdzanie/Tworzenie katalogu www: To ważny krok dodany ostatnio. Używa funkcji systemowych stat() (do sprawdzenia, czy katalog istnieje i czy jest katalogiem) oraz mkdir() (do utworzenia katalogu z uprawnieniami 0755, jeśli nie istnieje). Jeśli katalog nie istnieje i nie da się go utworzyć, lub jeśli ścieżka www_root istnieje, ale nie jest katalogiem, serwer kończy pracę z błędem.
+
 1.2. Konfiguracja gniazda (socket):
 socket(AF_INET, SOCK_STREAM, 0): Tworzy gniazdo sieciowe. AF_INET oznacza użycie protokołu IPv4, SOCK_STREAM oznacza gniazdo strumieniowe (dla TCP).
 setsockopt(...): Ustawia opcje gniazda. SO_REUSEADDR i SO_REUSEPORT pozwalają na natychmiastowe ponowne użycie adresu i portu po zamknięciu serwera, co jest przydatne podczas dewelopmentu.
 address.sin_family = AF_INET; address.sin_addr.s_addr = INADDR_ANY; address.sin_port = htons(8080);: Konfiguruje strukturę adresu serwera. INADDR_ANY oznacza, że serwer będzie nasłuchiwał na wszystkich dostępnych interfejsach sieciowych maszyny, a htons(8080) ustawia port nasłuchu na 8080 (konwertując go na sieciowy porządek bajtów).
 bind(...): Przypisuje utworzone gniazdo do skonfigurowanego adresu i portu.
 listen(...): Przełącza gniazdo w tryb nasłuchu, gotowe do akceptowania przychodzących połączeń. 10 to tzw. "backlog" – maksymalna liczba połączeń oczekujących w kolejce.
-1.3 Główna pętla serwera (while (true)):
+
+1.3. Główna pętla serwera (while (true)):
 accept(...): To blokująca funkcja, która czeka na nowe połączenie od klienta. Gdy połączenie nadejdzie, accept tworzy nowe gniazdo (new_socket_fd) dedykowane do komunikacji z tym konkretnym klientem i wypełnia strukturę client_address_struct informacjami o adresie klienta.
 handle_connection(...): Jeśli accept zakończy się sukcesem, wywoływana jest ta funkcja, aby obsłużyć żądanie od połączonego klienta. Przekazywane jest do niej gniazdo klienta, informacje o jego adresie oraz ścieżka do www_root i nazwa pliku logu.
-1.4 Zamykanie (teoretyczne): Linijki log_message("Server shutting down...", ...) i close(server_fd) są w obecnej formie nieosiągalne, ponieważ pętla while(true) jest nieskończona. W bardziej rozbudowanym serwerze istniałby mechanizm do eleganckiego zamknięcia serwera (np. po otrzymaniu sygnału).
+
+1.4. Zamykanie (teoretyczne): Linijki log_message("Server shutting down...", ...) i close(server_fd) są w obecnej formie nieosiągalne, ponieważ pętla while(true) jest nieskończona. W bardziej rozbudowanym serwerze istniałby mechanizm do eleganckiego zamknięcia serwera (np. po otrzymaniu sygnału).
 
 2. Funkcja handle_connection() - Obsługa pojedynczego klienta:
 
